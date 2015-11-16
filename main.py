@@ -13,6 +13,11 @@ _t_arrival = 0;
 _t_transmission = 0;
 _currently_serving = -1;
 
+_N = 0; #Number of computers connected to the LAN
+_A = 0; #Data packets arrive at the MAC layer following a Poisson process with an average arrival rate of A packets/second
+_W = 0; #the speed of the LAN
+_L = 0; #Packet length
+_P = 0; #Persistence parameter for P-persistent CSMA protocols
 
 # Statistics
 _s_idle_sum = 0 # Total amount idle
@@ -28,24 +33,70 @@ _s_packets_added = 0
 
 def main():
 	global _lambda
-        global _queue_type
-        global _L
-        global _C
-        global _currently_serving
-        global _t_arrival
-        global _t_departure
-        global _q
-        global _s_num_loops
-        global _t_transmission
-        global _s_idle_sum
-        global _s_num_loops
-        global _s_num_delays
-        global _s_delay_sum
-        global _s_packets_dropped
-        global _s_packets_added
-        global _s_queue_sum
-        global _s_queue_type
-        #_queue_type = int(input("0 for M/D/1 or K for M/D/1/K: "))
+	global _queue_type
+	global _C
+	global _currently_serving
+	global _t_arrival
+	global _t_departure
+	global _q
+	global _s_num_loops
+	global _t_transmission
+	global _s_idle_sum
+	global _s_num_loops
+	global _s_num_delays
+	global _s_delay_sum
+	global _s_packets_dropped
+	global _s_packets_added
+	global _s_queue_sum
+	global _s_queue_type
+	
+	global _N; #Number of computers connected to the LAN
+	global _A; #Data packets arrive at the MAC layer following a Poisson process with an average arrival rate of A packets/second
+	global _W; #the speed of the LAN
+	global _L; #Packet length
+	global _P; #Persistence parameter for P-persistent CSMA protocols
+	
+	_N = 5
+	ticks = 10000 #15us
+	secondsPerTick = 0.000000015
+	propagation_speed = (2/3)*299792458 # speed of electrons through copper wire is 2 thirds the speed of light (m/s)
+	
+	# Create Array of Computers using Persistence parameter
+	Object computerList = new Object[_N]
+	for i in range(0,_N-1):
+		#Length to farthest node
+		if (_N - (i+1) >= (i+1) ):
+			length = (_N-i)*10
+		else:
+			length = i*10
+		computerList[i] = new Object(ticks, (length/propagation_speed)/secondsPerTick) #( max tick amount, tick amount to reach all nodes)
+
+	_q = deque() # Create Queue
+	#Simulate each tick for each Computer
+	isTransmitting = -1;
+	for t in range(0,ticks):
+		for i in range(0,_N-1):
+			status = computerList[i].next_tick();
+			if (status = "sense_medium"):
+				if (isTransmitting != -1):
+					computerList[i].medium_busy()
+				else:
+					computerList[i].begin_transmitting()
+					isTransmitting = i
+			elif (status = ""):
+				if (isTransmitting != -1):
+					computerList[i].collision_occurs()
+					computerList[isTransmitting].collision_occurs()
+				else:
+					computerList[i].begin_transmitting()
+					isTransmitting = i
+
+	# Delay is defined as the gap between the time a packet is generated and the time it is successfully transmitted. 
+	
+	
+	
+	
+	#_queue_type = int(input("0 for M/D/1 or K for M/D/1/K: "))
 	#ticks = int(input("enter tick amount: "))
 	# Average number of packets generated /arrived (packets per second)
 	#_lambda = float(input("enter lambda: "))

@@ -32,79 +32,65 @@ _s_packets_dropped = 0
 _s_packets_added = 0
 
 def main():
-	global _lambda
-	global _queue_type
-	global _C
-	global _currently_serving
-	global _t_arrival
-	global _t_departure
-	global _q
-	global _s_num_loops
-	global _t_transmission
-	global _s_idle_sum
-	global _s_num_loops
-	global _s_num_delays
-	global _s_delay_sum
-	global _s_packets_dropped
-	global _s_packets_added
-	global _s_queue_sum
-	global _s_queue_type
-	
-	global _N; #Number of computers connected to the LAN
-	global _A; #Data packets arrive at the MAC layer following a Poisson process with an average arrival rate of A packets/second
-	global _W; #the speed of the LAN
-	global _L; #Packet length
-	global _P; #Persistence parameter for P-persistent CSMA protocols
-	
-	_N = 5
-	ticks = 10000 #15us
-	secondsPerTick = 0.000000015
-	propagation_speed = (2/3)*299792458 # speed of electrons through copper wire is 2 thirds the speed of light (m/s)
-	
-	# Create Array of Computers using Persistence parameter
-	Object computerList = new Object[_N]
-	for i in range(0,_N-1):
-		#Length to farthest node
-		if (_N - (i+1) >= (i+1) ):
-			length = (_N-i)*10
-		else:
-			length = i*10
-		computerList[i] = new Object(ticks, (length/propagation_speed)/secondsPerTick) #( max tick amount, tick amount to reach all nodes)
+    global _lambda
+    global _queue_type
+    global _C
+    global _currently_serving
+    global _t_arrival
+    global _t_departure
+    global _q
+    global _s_num_loops
+    global _t_transmission
+    global _s_idle_sum
+    global _s_num_loops
+    global _s_num_delays
+    global _s_delay_sum
+    global _s_packets_dropped
+    global _s_packets_added
+    global _s_queue_sum
+    global _s_queue_type
 
-	_q = deque() # Create Queue
-	#Simulate each tick for each Computer
-	isTransmitting = -1;
-	for t in range(0,ticks):
-		for i in range(0,_N-1):
-			status = computerList[i].next_tick();
-			if (status = "sense_medium"):
-				if (isTransmitting != -1):
-					computerList[i].medium_busy()
-				else:
-					computerList[i].begin_transmitting()
-					isTransmitting = i
-			elif (status = ""):
-				if (isTransmitting != -1):
-					computerList[i].collision_occurs()
-					computerList[isTransmitting].collision_occurs()
-				else:
-					computerList[i].begin_transmitting()
-					isTransmitting = i
+    global _N; #Number of computers connected to the LAN
+    global _A; #Data packets arrive at the MAC layer following a Poisson process with an average arrival rate of A packets/second
+    global _W; #the speed of the LAN
+    global _L; #Packet length
+    global _P; #Persistence parameter for P-persistent CSMA protocols
 
-	# Delay is defined as the gap between the time a packet is generated and the time it is successfully transmitted. 
-	
-	
-	
-	
-	#_queue_type = int(input("0 for M/D/1 or K for M/D/1/K: "))
-	#ticks = int(input("enter tick amount: "))
-	# Average number of packets generated /arrived (packets per second)
-	#_lambda = float(input("enter lambda: "))
-	# Length of a packet in bits
-	#_L = float(input("Enter L: "))
-	# The service time received by a packet.
-	# (Example: The transmission rate of the output link in bits per second.)
-	#_C = float(input("Enter C: "))
+    self._N = 5
+    self.ticks = 10000 #15us
+    self.secondsPerTick = 0.000000015
+    self.propagation_speed = (2/3)*299792458 # speed of electrons through copper wire is 2 thirds the speed of light (m/s)
+    self.delay_tbl = [[0 for x in range(self._N)] for x in range(self._N)]
+
+    # Create Array of Computers using Persistence parameter
+    Object self.computerList = new Object[_N]
+    for i in range(0,_N-1):
+        #Length to farthest node
+        if (_N - (i+1) >= (i+1) ):
+            length = (_N-i)*10
+        else:
+            length = i*10
+        self.computerList[i] = new Object(ticks, (length/propagation_speed)/secondsPerTick) #( max tick amount, tick amount to reach all nodes)
+
+    _q = deque() # Create Queue
+    #Simulate each tick for each Computer
+    medium_busy = -1;
+    for t in range(0,ticks):
+        for i in range(0,_N-1):
+            status = self.computerList[i].next_tick();
+            if (status = "sense_medium"):
+                if (medium_busy != -1):
+                    self.computerList[i].medium_busy()
+                else:
+                    self.computerList[i].begin_transmitting()
+                    fill_table(t, i)
+
+            elif (status == "finished"):
+                medium_busy = i;
+
+            elif (status = "transmit"):
+                if t in self.computerList[i].delay_set:
+                    self.computerList[i].collision_occurs()
 
         _L = 2000
         _C = 1000000
@@ -138,6 +124,17 @@ def main():
             start_simulation(ticks)
             create_report();
 
+def fill_table(currentTick, computer):
+    for i in range(0,self.N - 1):
+        if i == computer
+            continue
+
+        length = abs(i - computer) * 10
+
+        int tickVal = currentTick + (self.length/self.propagation_speed)/self.secondsPerTick
+        self.computerList[computer].add_delay(tickVal)
+
+
 def start_simulation(ticks):
     global _s_num_loops
     global _s_queue_sum
@@ -151,13 +148,13 @@ def start_simulation(ticks):
         departure(t)
 
 def calc_arrival_time():
-    	global _lambda
+        global _lambda
 
         #generate random number between 0...1
-	# this needs to include 1 though?
-	# currently its [0, 1)
-	randomNum = np.random.uniform(0,1,1)[0]
-	arrival_time = ((-1 / _lambda)*np.log( 1-randomNum ) * 1000000) # lambdaVar is packets per second
+    # this needs to include 1 though?
+    # currently its [0, 1)
+    randomNum = np.random.uniform(0,1,1)[0]
+    arrival_time = ((-1 / _lambda)*np.log( 1-randomNum ) * 1000000) # lambdaVar is packets per second
         return int(arrival_time)
 
 def arrival(t):
@@ -254,7 +251,7 @@ def create_report():
         print ("No packet delay!")
     else:
         print(_s_delay_sum / _s_num_delays)
-	# NEED: Packet Delay, Server Busy Time, Server Idle Time, Average Queue Size
+    # NEED: Packet Delay, Server Busy Time, Server Idle Time, Average Queue Size
     #if _queue_type != 0:
     #    print("Percent Packets Dropped")
     #    print (_s_packets_dropped / (_s_packets_dropped + _s_packets_added)) *100

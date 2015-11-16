@@ -56,9 +56,12 @@ def main():
     global _L; #Packet length
     global _P; #Persistence parameter for P-persistent CSMA protocols
 
-    self._N = 5
-    self.ticks = 10000 #15us
-    self.secondsPerTick = 0.000000015
+    self._N = 20
+    self._A = 5
+    self._W = 1000000
+    self._P = 0
+    self.ticks = ((_A*_L)/W)/secondsPerTick #Amount of ticks needed to send data
+    self.secondsPerTick = 0.000000015 # each tick is 15us
     self.propagation_speed = (2/3)*299792458 # speed of electrons through copper wire is 2 thirds the speed of light (m/s)
     self.delay_tbl = [[0 for x in range(self._N)] for x in range(self._N)]
 
@@ -74,10 +77,12 @@ def main():
 
     _q = deque() # Create Queue
     #Simulate each tick for each Computer
-    medium_busy = -1;
+    medium_busy = -1
+    total_delay = 0
+    total_transmitted = 0
     for t in range(0,ticks):
         for i in range(0,_N-1):
-            status = self.computerList[i].next_tick();
+            status = self.computerList[i].next_tick()
             if (status = "sense_medium"):
                 if (medium_busy != -1):
                     self.computerList[i].medium_busy()
@@ -87,11 +92,17 @@ def main():
 
             elif (status == "finished"):
                 medium_busy = i;
+                total_delay += self.computerList[i].get_delay()
+                total_transmitted += 1;
 
             elif (status = "transmit"):
                 if t in self.computerList[i].delay_set:
                     self.computerList[i].collision_occurs()
 
+    avg_delay = total_delay/total_transmitted
+    throughput = total_transmitted/(self.ticks * self.secondsPerTick)
+                    
+                    
         _L = 2000
         _C = 1000000
         ticks = 100000

@@ -60,7 +60,6 @@ def main():
     self.ticks = 10000 #15us
     self.secondsPerTick = 0.000000015
     self.propagation_speed = (2/3)*299792458 # speed of electrons through copper wire is 2 thirds the speed of light (m/s)
-    self.delay_tbl = [[0 for x in range(self._N)] for x in range(self._N)]
 
     # Create Array of Computers using Persistence parameter
     Object self.computerList = new Object[_N]

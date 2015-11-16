@@ -15,8 +15,17 @@ class Computer:
     def __init__(self, max_ticks, transmit_delay):
         self.p = p
         self.state = State.wait
+        self.max_ticks = max_ticks
         self.wait_delay = wait_time(max_ticks)
         self.transmit_delay = transmit_delay
+        self.delay_set = set()
+        self.total_delay = 0
+
+    def delay_set(self):
+        return delay_set
+
+    def add_delay(self, tick_num):
+        delay_set.add(tick_num)
 
     def wait_time(self, i):
         return TIME_TP * calc_rand((2^i) - 1)
@@ -28,10 +37,18 @@ class Computer:
     def wait(self):
         self.state = State.wait
 
+    def medium_busy(self):
+        self.state = State.wait
+        self.wait_delay = wait_time(self.max_ticks)
+
     def begin_transmitting(self):
         self.state = State.transmit
 
+    def get_delay(self):
+        return self.total_delay
+
     def next_tick(self):
+        self.total_delay += 1
         if self.state == State.wait:
             self.wait_delay -= 1
             if self.wait_delay <= 0:

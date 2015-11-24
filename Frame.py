@@ -39,8 +39,8 @@ class Frame(object):
 				self._mLeftmostLeadingEdge = self._mMinimumPosition
 
 	def updateRightmostEdge(self, tick):
-		if self._mRightmostTrailingEdge > self._mRightmostLeadingEdge:
-			Console.WriteLine(self._mRightmostTrailingEdge + " " + self._mRightmostLeadingEdge)
+		#if self._mRightmostTrailingEdge > self._mRightmostLeadingEdge:
+			#print(self._mRightmostTrailingEdge + " " + self._mRightmostLeadingEdge)
 		if self._mTransmissionComplete:
 			if self._mRightmostTrailingEdge >= self._mMaximumPosition:
 				return

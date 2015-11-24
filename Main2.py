@@ -108,6 +108,7 @@ class Main2(object):
             print("")
             numComputers += 20
          print("")
+         packetsPerSecond +=1;
 
    def q2(self, simulationLength):
       transmissionRate = 1000000 # bits/s
@@ -125,6 +126,7 @@ class Main2(object):
             print("")
             packetsPerSecond += 4
          print("")
+         numComputers +=10
 
    def q3(self, simulationLength):
       print("q3 results are the same as q1")
@@ -159,6 +161,7 @@ class Main2(object):
             print("")
             packetsPerSecond += 1
          print("")
+         i += 1
 
 m = Main2()
 m.main(['-T', 2, '-q', 1]);

@@ -4,6 +4,7 @@ from collections import deque
 import numpy as np
 
 class Station(object):
+    TICKS_PER_SECOND = 1000000 # ticks/second
     """ generated source for class Station """
     MAX_BACKOFF_COUNT = 10
 
@@ -53,7 +54,7 @@ class Station(object):
         self.mPacketSize = packetSize
         self.mMessageQueue = deque()
         self.mCurrentMessage = None
-        self.mState = States.Idle
+        self.mState = self.States.Idle
         self.mNextTickForPacket = 0
         self.mNextTickForTransmissionCompletion = 0
         self.mNextTickForRetryAfterBackoff = 0
@@ -61,35 +62,35 @@ class Station(object):
 
     def advanceTick(self, tick):
         """ generated source for method advanceTick """
-        simulateNetworkLayer(tick)
-        if self.mState==Idle:
-            idleState(tick)
-        elif self.mState==Sensing:
-            sensingState(tick)
-        elif self.mState==Transmitting:
-            transmittingState(tick)
-        elif self.mState==TransmittingWaiting:
-            transmittingWaitingState(tick)
-        elif self.mState==Jamming:
-            jammingState(tick)
-        elif self.mState==JammingWaiting:
-            jammingWaitingState(tick)
-        elif self.mState==BackOff:
-            backoffState(tick)
-        elif self.mState==BackOffWaiting:
-            backoffWaitingState(tick)
+        self.simulateNetworkLayer(tick)
+        if self.mState==self.States.Idle:
+            self.idleState(tick)
+        elif self.mState==self.States.Sensing:
+            self.sensingState(tick)
+        elif self.mState==self.States.Transmitting:
+            self.transmittingState(tick)
+        elif self.mState==self.States.TransmittingWaiting:
+            self.transmittingWaitingState(tick)
+        elif self.mState==self.States.Jamming:
+            self.jammingState(tick)
+        elif self.mState==self.States.JammingWaiting:
+            self.jammingWaitingState(tick)
+        elif self.mState==self.States.BackOff:
+            self.backoffState(tick)
+        elif self.mState==self.States.BackOffWaiting:
+            self.backoffWaitingState(tick)
 
     #  -------------------------------------------------------------------------
     #  Idle
     #  -------------------------------------------------------------------------
     def idleState(self, tick):
         """ generated source for method idleState """
-        assert (self.mState == States.Idle)
+        assert (self.mState == self.States.Idle)
 
         """ If the message queue isn't empty """
         if len(self.mMessageQueue) != 0:
             self.mBackoffIteration = 0
-            self.mState = States.Sensing
+            self.mState = self.States.Sensing
 
     #  -------------------------------------------------------------------------
     #  Sensing
@@ -173,7 +174,7 @@ class Station(object):
     #  -------------------------------------------------------------------------
     def bitTicks(self, bits):
         """ generated source for method bitTicks """
-        return ((bits * Main.TICKS_PER_SECOND) / self.mTransmissionRate)
+        return ((bits * self.TICKS_PER_SECOND) / self.mTransmissionRate)
 
     def getPosition(self):
         """ generated source for method getPosition """
@@ -181,15 +182,15 @@ class Station(object):
 
     def simulateNetworkLayer(self, tick):
         """ generated source for method simulateNetworkLayer """
-        if tick == mNextTickForPacket:
-            self.mMessageQueue.add(f)
-            self.mNextTickForPacket = tick + delayToNextPacket()
+        if tick == self.mNextTickForPacket:
+            f = Frame(self.mPacketSize, tick, self.mPosition)
+            self.mMessageQueue.append(f)
+            self.mNextTickForPacket = tick + self.delayToNextPacket()
 
     def delayToNextPacket(self):
         """ generated source for method delayToNextPacket """
-        r = Random()
-        delay = -(1.0 / (self.mPacketsPerSecond)) * np.log(1 - np.random.uniform)
+        delay = -(1.0 / (self.mPacketsPerSecond)) * np.log(1 - np.random.uniform())
         #  exponential distribution in seconds
-        return delay * Main.TICKS_PER_SECOND
+        return delay * self.TICKS_PER_SECOND
         #return (Math.round(delay * Main.TICKS_PER_SECOND))
 

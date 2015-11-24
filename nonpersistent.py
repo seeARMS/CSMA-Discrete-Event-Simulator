@@ -11,23 +11,23 @@ class StationNonPersistent(Station):
     mRandomWait = long()
 
     def __init__(self, bus, position, packetsPerSecond, transmissionRate, packetSize):
-        super(StationNonPersistent, self).__init(packetSize)
+        super(self.__class__, self).__init__(bus, position, packetsPerSecond, transmissionRate, packetSize)
         """ generated source for method __init__ """
         #super(StationNonPersistent, self).__init__(packetSize)
         self.mRandomWait = 0
 
     def sensingState(self, tick):
         """ generated source for method sensingState """
-        assert (mState == States.Sensing)
+        #assert (mState == Station.States.Sensing)
         if self.mRandomWait == 0:
-            if mBus.isBusy(getPosition()):
+            if self.mBus.isBusy(self.getPosition()):
                 self.mTicksSensing = 0
-                self.mRandomWait = ((np.random.uniform * ((2**mBackoffIteration) - 1))) * bitTicks(BACKOFF_BITS)
+                self.mRandomWait = ((np.random.uniform * ((2**mBackoffIteration) - 1))) * self.bitTicks(BACKOFF_BITS)
                 return
             self.mTicksSensing += 1
-            if self.mTicksSensing == bitTicks(SENSING_BIT_TIMES):
+            if self.mTicksSensing == self.bitTicks(self.SENSING_BIT_TIMES):
                 self.mTicksSensing = 0
-                mState = States.Transmitting
+                mState = self.States.Transmitting
         else:
             self.mRandomWait -= 1
 

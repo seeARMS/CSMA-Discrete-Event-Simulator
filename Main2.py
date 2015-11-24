@@ -84,6 +84,7 @@ class Main2(object):
       i = 0
       while i < simulationLength:
          if i % 100000 == 0:
+            print(station.mState)
             print("advance tick: ", i)
          bus.advanceTick(i)
          i += 1

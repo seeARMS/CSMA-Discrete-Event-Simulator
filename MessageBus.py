@@ -14,10 +14,10 @@ class MessageBus(object):
 		self.mStations.append(station)
 
    def isBusy(self, position):
-      print(self.mFramesOnBus)
+      #print(self.mFramesOnBus)
       for f in self.mFramesOnBus :
          if f.intersects(position):
-             return true
+             return True
       return False
 
    def startBroadcast(self, f):
@@ -46,7 +46,7 @@ class MessageBus(object):
 		f.completeTransmission(terminationTick)
 
    def hasCollision(self, position):
-      for f in mFramesOnBus :
+      for f in self.mFramesOnBus :
          if f.intersects(position):
-             return true
-      return false
+             return True
+      return False

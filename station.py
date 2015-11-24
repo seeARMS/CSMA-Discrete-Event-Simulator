@@ -2,10 +2,11 @@ from MessageBus import MessageBus
 from Frame import Frame
 from collections import deque
 from ResultsSingleton import ResultsSingleton
+from constants import Constants
 import numpy as np
 
 class Station(object):
-    TICKS_PER_SECOND = 1000000 # ticks/second
+    #TICKS_PER_SECOND = 1000000 # ticks/second
     """ generated source for class Station """
     MAX_BACKOFF_COUNT = 10
 
@@ -63,17 +64,17 @@ class Station(object):
 
     def advanceTick(self, tick):
         """ generated source for method advanceTick """
-        print(self.mState)
+        #print(self.mState)
+
+
         self.simulateNetworkLayer(tick)
         if self.mState==self.States.Idle:
             self.idleState(tick)
         elif self.mState==self.States.Sensing:
             self.sensingState(tick)
         elif self.mState==self.States.Transmitting:
-            print("transmitting")
             self.transmittingState(tick)
         elif self.mState==self.States.TransmittingWaiting:
-            print("transmitting waiting state")
             self.transmittingWaitingState(tick)
         elif self.mState==self.States.Jamming:
             self.jammingState(tick)
@@ -111,6 +112,8 @@ class Station(object):
 
         """ TODO(Colin): Pop or popleft? """
         self.mCurrentMessage = self.mMessageQueue.pop()
+        #print("CURRENT MESSAGE")
+        #print(self.mCurrentMessage)
         self.mBus.startBroadcast(self.mCurrentMessage)
         self.mNextTickForTransmissionCompletion = tick + self.mCurrentMessage.getTicksToFullyTransmit(self.mTransmissionRate)
         self.mState = self.States.TransmittingWaiting
@@ -119,65 +122,74 @@ class Station(object):
         """ generated source for method transmittingWaitingState """
         #assert (self.mState == States.TransmittingWaiting)
         #assert (self.mCurrentMessage != None)
+        #print("NEXT TICK FOR TRANS COMPLETE")
+        #print(self.mNextTickForTransmissionCompletion)
+        #print("CURRENT TICK")
+        #print(tick)
         if tick == self.mNextTickForTransmissionCompletion:
             self.mBus.stopBroadcast(self.mCurrentMessage, tick)
-            print("calling record success")
+            #print("calling record success")
             ResultsSingleton.getInstance().recordSuccess(tick, self.mCurrentMessage)
-            self.mState = States.Idle
+            self.mState = self.States.Idle
             #  Success
             return
         if self.mBus.hasCollision(self.mPosition):
+            #print("mbus has collision")
             self.mBus.stopBroadcast(self.mCurrentMessage, tick)
-            self.mState = States.Jamming
+            self.mState = self.States.Jamming
 
     #  -------------------------------------------------------------------------
     #  Jamming
     #  -------------------------------------------------------------------------
     def jammingState(self, tick):
         """ generated source for method jammingState """
-        assert (self.mState == States.Jamming)
-        self.mNextTickForTransmissionCompletion = tick + bitTicks(JAMMING_BITS)
-        self.mMessageQueue.addFirst(self.mCurrentMessage)
+        assert (self.mState == self.States.Jamming)
+        self.mNextTickForTransmissionCompletion = tick + self.bitTicks(self.JAMMING_BITS)
+        # add first
+        self.mMessageQueue.append(self.mCurrentMessage)
         #  Failed to transmit current message, try again after jamming and sensing
-        self.mCurrentMessage = Frame(JAMMING_BITS, tick, mPosition)
+        self.mCurrentMessage = Frame(self.JAMMING_BITS, tick, self.mPosition)
         self.mBus.startBroadcast(self.mCurrentMessage)
-        self.mState = States.JammingWaiting
+        self.mState = self.States.JammingWaiting
 
     def jammingWaitingState(self, tick):
         """ generated source for method jammingWaitingState """
-        assert (self.mState == States.JammingWaiting)
-        if tick == mNextTickForTransmissionCompletion:
+        assert (self.mState == self.States.JammingWaiting)
+        if tick == self.mNextTickForTransmissionCompletion:
             self.mBus.stopBroadcast(self.mCurrentMessage, tick)
-            self.mState = States.BackOff
+            self.mState = self.States.BackOff
 
     #  -------------------------------------------------------------------------
     #  Backoff
     #  -------------------------------------------------------------------------
     def backoffState(self, tick):
         """ generated source for method backoffState """
-        assert (self.mState == States.BackOff)
+        #assert (self.mState == States.BackOff)
         self.mBackoffIteration += 1
-        if self.mBackoffIteration > MAX_BACKOFF_COUNT:
+        if self.mBackoffIteration > self.MAX_BACKOFF_COUNT:
             ResultsSingleton.getInstance().recordError()
-            self.mBackoffIteration = MAX_BACKOFF_COUNT
-        r = Random()
-        R = np.random.uniform * ((2**self.mBackoffIteration) - 1)
-        delay = R * bitTicks(self.BACKOFF_BITS)
-        self.mNextTickForRetryAfterBackoff = ((tick + delay))
-        self.mState = States.BackOffWaiting
+            self.mBackoffIteration = self.MAX_BACKOFF_COUNT
+        #r = Random()
+        R = np.random.uniform(0,1,1)[0] * ((2**self.mBackoffIteration) - 1)
+        delay = R * self.bitTicks(self.BACKOFF_BITS)
+        # convert delay to an int??
+        self.mNextTickForRetryAfterBackoff = ((tick + int(delay)))
+        #print("DELAY")
+        #print(self.mNextTickForRetryAfterBackoff)
+        self.mState = self.States.BackOffWaiting
 
     def backoffWaitingState(self, tick):
         """ generated source for method backoffWaitingState """
-        assert (self.mState == States.BackOffWaiting)
-        if tick == mNextTickForRetryAfterBackoff:
-            self.mState = States.Sensing
+        assert (self.mState == self.States.BackOffWaiting)
+        if tick == self.mNextTickForRetryAfterBackoff:
+            self.mState = self.States.Sensing
 
     #  -------------------------------------------------------------------------
     #  Helpers
     #  -------------------------------------------------------------------------
     def bitTicks(self, bits):
         """ generated source for method bitTicks """
-        return ((bits * self.TICKS_PER_SECOND) / self.mTransmissionRate)
+        return ((bits * Constants.TICKS_PER_SECOND) / self.mTransmissionRate)
 
     def getPosition(self):
         """ generated source for method getPosition """
@@ -194,6 +206,6 @@ class Station(object):
         """ generated source for method delayToNextPacket """
         delay = -(1.0 / (self.mPacketsPerSecond)) * np.log(1 - np.random.uniform())
         #  exponential distribution in seconds
-        return delay * self.TICKS_PER_SECOND
+        return round(delay * Constants.TICKS_PER_SECOND)
         #return (Math.round(delay * Main.TICKS_PER_SECOND))
 

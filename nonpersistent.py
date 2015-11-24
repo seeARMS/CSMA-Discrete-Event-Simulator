@@ -17,21 +17,21 @@ class StationNonPersistent(Station):
         self.mRandomWait = 0
 
     def sensingState(self, tick):
-        print("In sensing state")
+        #print("In sensing state")
         #print"rand wait"
         #print(self.mRandomWait)
         """ generated source for method sensingState """
         #assert (mState == Station.States.Sensing)
         if self.mRandomWait == 0:
             #print("in random wait")
-            print(self.mRandomWait)
+            #print(self.mRandomWait)
             if self.mBus.isBusy(self.getPosition()):
                 print('is busy')
                 self.mTicksSensing = 0
-                self.mRandomWait = ((np.random.uniform * ((2**mBackoffIteration) - 1))) * self.bitTicks(BACKOFF_BITS)
+                self.mRandomWait = ((np.random.uniform(0,1,1)[0] * ((2**self.mBackoffIteration) - 1))) * self.bitTicks(self.BACKOFF_BITS)
                 return
             self.mTicksSensing += 1
-            print(self.mTicksSensing)
+            #print(self.mTicksSensing)
             if self.mTicksSensing == self.bitTicks(self.SENSING_BIT_TIMES):
                 self.mTicksSensing = 0
                 self.mState = self.States.Transmitting

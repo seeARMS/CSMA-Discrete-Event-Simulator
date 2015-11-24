@@ -28,11 +28,11 @@ class ResultsSingleton(object):
       throughput = self._mSuccesses / (totalTicks / ResultsSingleton.TICKS_PER_SECOND)
       avgDelay = (self._mTotalDelay / self._mSuccesses)
       utilization = (self._mSuccesses / self._mSent) * 100
-      print("Throughput (success/tick): " + throughput)
-      print("Average Delay (ticks):     " + avgDelay)
-      print("Average Delay (s):         " + avgDelay / ResultsSingleton.TICKS_PER_SECOND)
-      print("Num Errors:                " + self._mErrors)
-      print("Utilized Percentage:       " + utilization)
+      print("Throughput (success/tick): " , throughput)
+      print("Average Delay (ticks):     " , avgDelay)
+      print("Average Delay (s):         " , avgDelay / ResultsSingleton.TICKS_PER_SECOND)
+      print("Num Errors:                " , self._mErrors)
+      print("Utilized Percentage:       " , utilization)
 
    def reset(self):
       self._mErrors = 0

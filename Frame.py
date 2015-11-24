@@ -1,5 +1,7 @@
+from __future__ import division
+from constants import Constants
+
 class Frame(object):
-        _TICKS_PER_SECOND = 1000000 # ticks/second
 	def __init__(self, size, created, startingPosition):
 		self._mTransmissionComplete = False
 		self._mMinimumPosition = 0
@@ -14,7 +16,7 @@ class Frame(object):
 		return self._mCreated
 
 	def absoluteDistance(self, currentTick, sinceTick):
-		return ((currentTick - sinceTick) * (Main.PROPAGATION_SPEED / Main.TICKS_PER_SECOND))
+		return ((currentTick - sinceTick) * (Constants.PROPAGATION_SPEED / Constants.TICKS_PER_SECOND))
 
 	def getSender(self):
 		return self._mOrigin
@@ -60,7 +62,16 @@ class Frame(object):
 		return self._mCreated
 
 	def getTicksToFullyTransmit(self, transmissionRate):
-		return ((self._mPacketSize / transmissionRate) * self._TICKS_PER_SECOND)
+		t = ((self._mPacketSize / transmissionRate) * Constants.TICKS_PER_SECOND)
+                #print("pkt size")
+                #print(self._mPacketSize)
+                #print("tps")
+                ##print(Constants.TICKS_PER_SECOND)
+                #print("trate")
+                #print(transmissionRate)
+                #print("ticks to fully xmit")
+                #print(t)
+                return t
 
 	def completeTransmission(self, lastTick):
 		self._mTransmissionComplete = True

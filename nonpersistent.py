@@ -26,7 +26,7 @@ class StationNonPersistent(Station):
             #print("in random wait")
             #print(self.mRandomWait)
             if self.mBus.isBusy(self.getPosition()):
-                print('is busy')
+                #print('is busy')
                 self.mTicksSensing = 0
                 self.mRandomWait = ((np.random.uniform(0,1,1)[0] * ((2**self.mBackoffIteration) - 1))) * self.bitTicks(self.BACKOFF_BITS)
                 return

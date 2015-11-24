@@ -66,7 +66,6 @@ class Main2(object):
       bus = MessageBus()
       i = 0
       while i < numComputers:
-         print("beginning sim loop")
          station = None
          position = i * self._DISTANCE_BETWEEN_STATIONS
          #if persistenceType == self.OnePersistent:
@@ -83,8 +82,8 @@ class Main2(object):
       # Simulate
       i = 0
       while i < simulationLength:
-         if i % 100000 == 0:
-            print(station.mState)
+         if i % 1000000 == 0:
+            #print(station.mState)
             print("advance tick: ", i)
          bus.advanceTick(i)
          i += 1
@@ -99,12 +98,12 @@ class Main2(object):
       persistenceType = self.OnePersistent
       packetsPerSecond = 5
       while packetsPerSecond <= 7:
-         print("--------------------------------------------------------------- A ")
-         print(packetsPerSecond)
+         print("--------------------------------------------------------------- A ", packetsPerSecond)
+         #print(packetsPerSecond)
          numComputers = 20
          while numComputers <= 100:
-            print("N")
-            print(numComputers)
+            print("N ", numComputers)
+            #print(numComputers)
             self.startSimulation(numComputers, simulationLength, packetsPerSecond, transmissionRate, packetLength, persistenceType, 0)
             print("")
             numComputers += 20

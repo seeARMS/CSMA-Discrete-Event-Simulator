@@ -1,5 +1,8 @@
+from __future__ import division
+from constants import Constants
+
 class ResultsSingleton(object):
-   TICKS_PER_SECOND = 1000000 # ticks/second
+   #TICKS_PER_SECOND = 1000000 # ticks/second
    _mInstance = None
 
    def __init__(self):
@@ -20,17 +23,22 @@ class ResultsSingleton(object):
       self._mSent += 1
 
    def recordSuccess(self, tick, frame):
-      print("success")
+      #print("success")
       self._mSuccesses += 1
       self._mTotalDelay += (tick - frame.getCreatedTick())
 
    def printResults(self, totalTicks):
-      throughput = self._mSuccesses / (totalTicks / ResultsSingleton.TICKS_PER_SECOND)
-      avgDelay = (self._mTotalDelay / self._mSuccesses)
+      throughput = self._mSuccesses / (totalTicks / Constants.TICKS_PER_SECOND)
+      if self._mSuccesses != 0:
+        avgDelay = (self._mTotalDelay / self._mSuccesses)
+      else:
+        print("Successes was 0!")
+        avgDelay = 1
+        self._mSent = 1
       utilization = (self._mSuccesses / self._mSent) * 100
       print("Throughput (success/tick): " , throughput)
       print("Average Delay (ticks):     " , avgDelay)
-      print("Average Delay (s):         " , avgDelay / ResultsSingleton.TICKS_PER_SECOND)
+      print("Average Delay (s):         " , avgDelay / Constants.TICKS_PER_SECOND)
       print("Num Errors:                " , self._mErrors)
       print("Utilized Percentage:       " , utilization)
 

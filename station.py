@@ -1,6 +1,7 @@
 from MessageBus import MessageBus
 from Frame import Frame
 from collections import deque
+from ResultsSingleton import ResultsSingleton
 import numpy as np
 
 class Station(object):
@@ -69,6 +70,7 @@ class Station(object):
         elif self.mState==self.States.Sensing:
             self.sensingState(tick)
         elif self.mState==self.States.Transmitting:
+            print("transmitting")
             self.transmittingState(tick)
         elif self.mState==self.States.TransmittingWaiting:
             print("transmitting waiting state")
@@ -103,15 +105,15 @@ class Station(object):
     #  -------------------------------------------------------------------------
     def transmittingState(self, tick):
         """ generated source for method transmittingState """
-        assert (self.mState == States.Transmitting)
+        assert (self.mState == self.States.Transmitting)
         assert (len(self.mMessageQueue) > 0)
         ResultsSingleton.getInstance().recordMessageSent()
 
         """ TODO(Colin): Pop or popleft? """
-        self.mCurrentMessage = mMessageQueue.pop()
+        self.mCurrentMessage = self.mMessageQueue.pop()
         self.mBus.startBroadcast(self.mCurrentMessage)
-        self.mNextTickForTransmissionCompletion = tick + mCurrentMessage.getTicksToFullyTransmit(mTransmissionRate)
-        self.mState = States.TransmittingWaiting
+        self.mNextTickForTransmissionCompletion = tick + self.mCurrentMessage.getTicksToFullyTransmit(self.mTransmissionRate)
+        self.mState = self.States.TransmittingWaiting
 
     def transmittingWaitingState(self, tick):
         """ generated source for method transmittingWaitingState """

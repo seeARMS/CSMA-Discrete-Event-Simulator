@@ -1,4 +1,5 @@
 class MessageBus(object):
+   _DISTANCE_BETWEEN_STATIONS = 10
    def __init__(self):
       self.mStations = []
       self.mFramesOnBus = []
@@ -13,6 +14,7 @@ class MessageBus(object):
 		self.mStations.append(station)
 
    def isBusy(self, position):
+      print(self.mFramesOnBus)
       for f in self.mFramesOnBus :
          if f.intersects(position):
              return true
@@ -20,7 +22,7 @@ class MessageBus(object):
 
    def startBroadcast(self, f):
 		#self.assert(f != None)
-		f.setMaximumPosition(self._mStations.size() * Main.DISTANCE_BETWEEN_STATIONS)
+		f.setMaximumPosition(len(self.mStations) * self._DISTANCE_BETWEEN_STATIONS)
 		self.mFramesOnBus.append(f)
 
    def updateFramePosition(self, tick):

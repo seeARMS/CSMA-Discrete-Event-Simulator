@@ -62,6 +62,7 @@ class Station(object):
 
     def advanceTick(self, tick):
         """ generated source for method advanceTick """
+        print(self.mState)
         self.simulateNetworkLayer(tick)
         if self.mState==self.States.Idle:
             self.idleState(tick)
@@ -70,6 +71,7 @@ class Station(object):
         elif self.mState==self.States.Transmitting:
             self.transmittingState(tick)
         elif self.mState==self.States.TransmittingWaiting:
+            print("transmitting waiting state")
             self.transmittingWaitingState(tick)
         elif self.mState==self.States.Jamming:
             self.jammingState(tick)
@@ -95,8 +97,6 @@ class Station(object):
     #  -------------------------------------------------------------------------
     #  Sensing
     #  -------------------------------------------------------------------------
-    def sensingState(self, tick):
-        """ generated source for method sensingState """
 
     #  -------------------------------------------------------------------------
     #  Transmitting
@@ -115,10 +115,11 @@ class Station(object):
 
     def transmittingWaitingState(self, tick):
         """ generated source for method transmittingWaitingState """
-        assert (self.mState == States.TransmittingWaiting)
-        assert (self.mCurrentMessage != None)
-        if tick == mNextTickForTransmissionCompletion:
+        #assert (self.mState == States.TransmittingWaiting)
+        #assert (self.mCurrentMessage != None)
+        if tick == self.mNextTickForTransmissionCompletion:
             self.mBus.stopBroadcast(self.mCurrentMessage, tick)
+            print("calling record success")
             ResultsSingleton.getInstance().recordSuccess(tick, self.mCurrentMessage)
             self.mState = States.Idle
             #  Success

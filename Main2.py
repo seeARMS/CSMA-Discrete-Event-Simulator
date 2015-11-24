@@ -14,8 +14,8 @@ class Main2(object):
 
 
    def main(self, args):
-      ResultsSingleton.getInstance().printResults(100)
-      ResultsSingleton.getInstance().reset()
+      #ResultsSingleton.getInstance().printResults(100)
+      #ResultsSingleton.getInstance().reset()
 
       numComputers = 1
       simulationLength = self._SIMULATION_TIME * self._TICKS_PER_SECOND # ticks
@@ -161,6 +161,6 @@ class Main2(object):
          print("")
 
 m = Main2()
-m.main(['-T', 1, '-q', 1]);
+m.main(['-T', 2, '-q', 1]);
 
 

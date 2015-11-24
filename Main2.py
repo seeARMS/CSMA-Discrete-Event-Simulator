@@ -31,13 +31,13 @@ class Main2(object):
             if args[i + 1] == 1:
                self.q1(simulationLength)
             elif args[i + 1] == 2:
-               Main.q2(simulationLength)
+               self.q2(simulationLength)
             elif args[i + 1] == 3:
-               Main.q3(simulationLength)
+               self.q3(simulationLength)
             elif args[i + 1] == 4:
-               Main.q4(simulationLength)
+               self.q4(simulationLength)
             elif args[i + 1] == 5:
-               Main.q5(simulationLength)
+               self.q5(simulationLength)
             return
         elif args[i] == "-N" and i + 1 < len(args):
             numComputers = args[i + 1]
@@ -122,7 +122,7 @@ class Main2(object):
          while packetsPerSecond <= 20:
             print("A " )
             print(packetsPerSecond)
-            Main.startSimulation(numComputers, simulationLength, packetsPerSecond, transmissionRate, packetLength, persistenceType, 0)
+            self.startSimulation(numComputers, simulationLength, packetsPerSecond, transmissionRate, packetLength, persistenceType, 0)
             print("")
             packetsPerSecond += 4
          print("")
@@ -164,6 +164,6 @@ class Main2(object):
          i += 1
 
 m = Main2()
-m.main(['-T', 2, '-q', 1]);
+m.main(['-T', 10, '-q', 2]);
 
 
